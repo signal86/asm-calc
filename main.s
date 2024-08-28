@@ -29,9 +29,9 @@ STDIN equ 0
 STDOUT equ 1
 
 section .bss ; uninitialized variables
-    userNum1 resb 1
-    userNum2 resb 1
-    outp resb 3
+    userNum1 resb 16
+    userNum2 resb 16
+    outp resb 32
 
 section .text
     global _start
@@ -48,7 +48,7 @@ _start:
     mov rax, READ
     mov rdi, STDIN
     mov rsi, userNum1
-    mov rdx, 2
+    mov rdx, 17
     syscall
 
     ; prompt2
@@ -62,36 +62,58 @@ _start:
     mov rax, READ
     mov rdi, STDIN
     mov rsi, userNum2
-    mov rdx, 2
+    mov rdx, 17
     syscall
 
     ; move both numbers in eax and ebx
-    mov ax, [userNum1] 
-    mov bx, [userNum2]
+    mov eax, [userNum1] 
+    mov ebx, [userNum2]
 
     ; ASCII to decimal
-    sub ax, '0'
-    sub bx, '0'
+    sub eax, '0'
+    sub ebx, '0'
 
     ; combine eax and ebx to eax
-    add ax, bx
+    add eax, ebx
     ; decimal to ASCII
-    ;add ax, '0'
+    cmp eax, 10
+    mov ebx, 0xCCCCCCCD
+    xor rdi, rdi
+    jae convert
+    add eax, '0'
+    mov [outp], eax
+    jmp finalOutput
 
-    ; output variable set to value
-    mov [outp], ax
-
+finalOutput:
     ; final output
     mov rax, WRITE
     mov rdi, STDOUT
     mov rsi, outp
-    mov rdx, 3
+    mov rdx, 32
     syscall
 
     ; exit
     mov rax, EXIT
     mov rdi, 0 ; code 0
     syscall
+
+convert:
+    mov ecx, eax
+
+    mul ebx
+    shr edx, 3
+
+    mov eax, edx
+
+    lea edx, [edx*4 + edx]
+    shl rdi, 8
+    lea edx, [edx*2 - '0']
+    sub ecx, edx
+
+    lea rdi, [rdi + rcx]
+
+    test eax, eax
+    jnz convert
 
 section .data ; constants
     msg db "Enter a number: ", 10
