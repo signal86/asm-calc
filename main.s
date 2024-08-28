@@ -29,9 +29,9 @@ STDIN equ 0
 STDOUT equ 1
 
 section .bss ; uninitialized variables
-    userNum1 resb 16
-    userNum2 resb 16
-    outp resb 16
+    userNum1 resb 1
+    userNum2 resb 1
+    outp resb 3
 section .text
     global _start
 
@@ -47,7 +47,7 @@ _start:
     mov rax, READ
     mov rdi, STDIN
     mov rsi, userNum1
-    mov rdx, 16
+    mov rdx, 1
     syscall
 
     ; prompt2
@@ -61,30 +61,30 @@ _start:
     mov rax, READ
     mov rdi, STDIN
     mov rsi, userNum2
-    mov rdx, 16
+    mov rdx, 1
     syscall
 
     ; move both numbers in eax and ebx
-    mov rax, [userNum1]
-    mov rbx, [userNum2]
+    mov ax, [userNum1] 
+    mov bx, [userNum2]
 
-    ; subtract ascii '0 to convert it to decimal'
-    sub rax, '0'
-    sub rbx, '0'
+    ; subtract
+    sub ax, '0'
+    sub bx, '0'
 
     ; combine eax and ebx to eax
-    add rax, rbx
+    add ax, bx
     ; decimal to ASCII
-    add rax, '0'
+    add ax, '0'
 
     ; output variable set to value
-    mov [outp], rax
+    mov [outp], ax
 
     ; final output
-    mov rax, WRITE
-    mov rdi, STDOUT
-    mov rsi, outp
-    mov rdx, 16
+    mov eax, WRITE
+    mov edi, STDOUT
+    mov esi, outp
+    mov edx, 3
     syscall
 
     ; exit
@@ -94,6 +94,6 @@ _start:
 
 section .data ; constants
     msg db "Enter a number: ", 10
-    msgLen equ $ - msg
+    msgLen equ $ - msg - 1
     msg2 db "Enter another number: ", 10
-    msg2Len equ $ - msg2 
+    msg2Len equ $ - msg2 - 1
