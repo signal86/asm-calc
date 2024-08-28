@@ -32,6 +32,7 @@ section .bss ; uninitialized variables
     userNum1 resb 1
     userNum2 resb 1
     outp resb 3
+
 section .text
     global _start
 
@@ -47,7 +48,7 @@ _start:
     mov rax, READ
     mov rdi, STDIN
     mov rsi, userNum1
-    mov rdx, 1
+    mov rdx, 2
     syscall
 
     ; prompt2
@@ -61,14 +62,14 @@ _start:
     mov rax, READ
     mov rdi, STDIN
     mov rsi, userNum2
-    mov rdx, 1
+    mov rdx, 2
     syscall
 
     ; move both numbers in eax and ebx
     mov ax, [userNum1] 
     mov bx, [userNum2]
 
-    ; subtract
+    ; ASCII to decimal
     sub ax, '0'
     sub bx, '0'
 
