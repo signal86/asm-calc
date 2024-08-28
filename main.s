@@ -76,16 +76,16 @@ _start:
     ; combine eax and ebx to eax
     add ax, bx
     ; decimal to ASCII
-    add ax, '0'
+    ;add ax, '0'
 
     ; output variable set to value
     mov [outp], ax
 
     ; final output
-    mov eax, WRITE
-    mov edi, STDOUT
-    mov esi, outp
-    mov edx, 3
+    mov rax, WRITE
+    mov rdi, STDOUT
+    mov rsi, outp
+    mov rdx, 3
     syscall
 
     ; exit
